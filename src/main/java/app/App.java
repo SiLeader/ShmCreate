@@ -13,10 +13,9 @@ public class App{
         MPIConnector mpiConnector = new MPIConnector();
         mpiConnector.openMPI(args);
 
-        ByteBuffer[] bb;
         if(mpiConnector.isMaster()){
             ShmReceiver receiver = new ShmReceiver(conf);
-            bb = receiver.recvFromSpark(conf.n_objs);
+            ByteBuffer[] bb = receiver.recvFromSpark(conf.n_objs);
             mpiConnector.sendInt(bb.length);
             mpiConnector.sendByteBuffer(bb);
             for(ByteBuffer b: bb){
