@@ -1,28 +1,18 @@
 package app;
 
 import app.shm.*;
-import app.mpi.MPIConnector;
 
-public class App{
+// not make shm
+public class SparkInstead{
     public static void main(String[] args) throws Exception {
         ShmConf conf = new ShmConf();
-        //MPIConnector mpiConnector = new MPIConnector();
-        //mpiConnector.openMPI(args);
-
-        //if(mpiConnector.isMaster()){
-        //    System.out.println("master");
-        //}
-        //else{
-        //    System.out.println("slaves");
-        //}
-        //mpiConnector.closeMPI();
         XorDigest md;
         if(args[0].equals("send")){
-            ShmSender sender = new ShmSender(conf);
+            ShmSender sender = new ShmSender(conf,false);
             md = sender.random_sending(conf.path, conf.n_objs, conf.obj_size, conf.q_length);
         }
         else{
-            ShmReceiver receiver = new ShmReceiver(conf);
+            ShmReceiver receiver = new ShmReceiver(conf,false);
             md = receiver.random_receiving(conf.path, conf.n_objs);
         }
 

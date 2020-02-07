@@ -11,6 +11,13 @@ public class ShmReceiver {
   public ShmReceiver(ShmConf conf) throws Exception{
     System.err.println("path=" + conf.path +
             ", n_objs=" + conf.n_objs + ", obj_size=" + conf.obj_size + ", q_length=" + conf.q_length);
+    q = new ShmQueue(conf.path, conf.obj_size, conf.q_length);
+    md = new XorDigest(2);
+  }
+
+  public ShmReceiver(ShmConf conf,Boolean shouldMakeShm) throws Exception{
+    System.err.println("path=" + conf.path +
+            ", n_objs=" + conf.n_objs + ", obj_size=" + conf.obj_size + ", q_length=" + conf.q_length);
     q = new ShmQueue(conf.path);
     md = new XorDigest(2);
   }

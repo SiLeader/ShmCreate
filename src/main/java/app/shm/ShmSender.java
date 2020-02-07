@@ -17,6 +17,15 @@ public class ShmSender {
         series = new byte[conf.obj_size];
     }
 
+    public ShmSender(ShmConf conf,Boolean shouldMakeShm) throws Exception{
+        System.err.println("path=" + conf.path +
+                ", n_objs=" + conf.n_objs + ", obj_size=" + conf.obj_size + ", q_length=" + conf.q_length);
+        q = new ShmQueue(conf.path);
+        md = new XorDigest(2);
+        rnd = new Random();
+        series = new byte[conf.obj_size];
+    }
+
     public XorDigest random_sending(String path, int n_objs, int obj_size, int q_length) throws Exception {
         rnd.nextBytes(series);
         for (int i = 0; i < n_objs; i++) {
