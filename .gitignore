@@ -1,12 +1,10 @@
-*.class
-.classpath
-.project
 .gradle/
 .settings/
 .idea/
 /build
 gradle/
+
+*.class
+.classpath
+.project
 /bin
-gradlew
-gradlew.bat
-settings.gradlet
