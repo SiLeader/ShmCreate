@@ -37,5 +37,20 @@ public class ShmReceiver {
     md.update(b);
     return md;
   }
+
+  public ByteBuffer[] recvFromSpark(int n_objs) throws Exception {
+    int progress = -1;
+    ByteBuffer[] b = new ByteBuffer[n_objs];
+    for (int i = 0; i < n_objs; i++) {
+      b[i] = q.start_dequeue_wait();
+      q.finish_dequeue();
+      if (progress != i * 100 / n_objs) {
+        progress = i * 100 / n_objs;
+        System.err.println("progress: " + progress + "%");
+      }
+    }
+    return b;
+  }
+
 }
 

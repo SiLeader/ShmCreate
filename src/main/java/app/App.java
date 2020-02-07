@@ -3,33 +3,30 @@ package app;
 import app.shm.*;
 import app.mpi.MPIConnector;
 
+import java.nio.ByteBuffer;
+
 public class App{
     public static void main(String[] args) throws Exception {
-        //ShmConf conf = new ShmConf();
+        ShmConf conf = new ShmConf();
         MPIConnector mpiConnector = new MPIConnector();
         mpiConnector.openMPI(args);
 
+        ByteBuffer[] bb;
         if(mpiConnector.isMaster()){
-            System.out.println("master");
+            ShmReceiver receiver = new ShmReceiver(conf);
+            bb = receiver.recvFromSpark(conf.n_objs);
+            for(ByteBuffer b: bb){
+                System.out.println(b);
+            }
         }
         else{
-            System.out.println("slaves");
+            ShmSender sender = new ShmSender(conf);
+            //md = sender.random_sending(conf.path, conf.n_objs, conf.obj_size, conf.q_length);
         }
-        mpiConnector.closeMPI();
-        //XorDigest md;
-        //if(args[0].equals("send")){
-        //    ShmSender sender = new ShmSender(conf);
-        //    md = sender.random_sending(conf.path, conf.n_objs, conf.obj_size, conf.q_length);
-        //}
-        //else{
-        //    ShmReceiver receiver = new ShmReceiver(conf);
-        //    md = receiver.random_receiving(conf.path, conf.n_objs);
-        //}
 
-        //StringBuilder result = new StringBuilder();
-        //for (byte b : md.digest()) {
-        //    result.append(String.format("%02x", b));
-        //}
-        //System.out.println(result);
+        StringBuilder result = new StringBuilder();
+        System.out.println(result);
+
+        mpiConnector.closeMPI();
     }
 }
