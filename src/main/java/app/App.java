@@ -5,31 +5,31 @@ import app.mpi.MPIConnector;
 
 public class App{
     public static void main(String[] args) throws Exception {
-        ShmConf conf = new ShmConf();
-        //MPIConnector mpiConnector = new MPIConnector();
-        //mpiConnector.openMPI(args);
+        //ShmConf conf = new ShmConf();
+        MPIConnector mpiConnector = new MPIConnector();
+        mpiConnector.openMPI(args);
 
-        //if(mpiConnector.isMaster()){
-        //    System.out.println("master");
-        //}
-        //else{
-        //    System.out.println("slaves");
-        //}
-        //mpiConnector.closeMPI();
-        XorDigest md;
-        if(args[0].equals("send")){
-            ShmSender sender = new ShmSender(conf);
-            md = sender.random_sending(conf.path, conf.n_objs, conf.obj_size, conf.q_length);
+        if(mpiConnector.isMaster()){
+            System.out.println("master");
         }
         else{
-            ShmReceiver receiver = new ShmReceiver(conf);
-            md = receiver.random_receiving(conf.path, conf.n_objs);
+            System.out.println("slaves");
         }
+        mpiConnector.closeMPI();
+        //XorDigest md;
+        //if(args[0].equals("send")){
+        //    ShmSender sender = new ShmSender(conf);
+        //    md = sender.random_sending(conf.path, conf.n_objs, conf.obj_size, conf.q_length);
+        //}
+        //else{
+        //    ShmReceiver receiver = new ShmReceiver(conf);
+        //    md = receiver.random_receiving(conf.path, conf.n_objs);
+        //}
 
-        StringBuilder result = new StringBuilder();
-        for (byte b : md.digest()) {
-            result.append(String.format("%02x", b));
-        }
-        System.out.println(result);
+        //StringBuilder result = new StringBuilder();
+        //for (byte b : md.digest()) {
+        //    result.append(String.format("%02x", b));
+        //}
+        //System.out.println(result);
     }
 }
