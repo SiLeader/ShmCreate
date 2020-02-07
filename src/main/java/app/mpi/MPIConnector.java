@@ -3,6 +3,8 @@ package app.mpi;
 import mpi.*;
 import app.logger.Logger;
 
+import java.nio.ByteBuffer;
+
 public class MPIConnector{
     // MPI  variable
     int mpiRank = -1;
@@ -25,13 +27,23 @@ public class MPIConnector{
         return (mpiRank == 0);
     }
 
-    public void BcastSendInt(int value){
+    public void sendByteBuffer(ByteBuffer[] array){
+        MPI.COMM_WORLD.Bcast(array, 0, array.length, MPI.OBJECT, 0);
+    }
+
+    public ByteBuffer[] recvByteBuffer(int arraySize){
+        ByteBuffer[] recvBuf = new ByteBuffer[arraySize];
+        MPI.COMM_WORLD.Bcast(recvBuf, 0, arraySize, MPI.OBJECT, 0);
+        return recvBuf;
+    }
+
+    public void sendInt(int value){
         int[] sendBuf = new int[1];
         sendBuf[0] = value;
         MPI.COMM_WORLD.Bcast(sendBuf, 0, 1, MPI.INT, 0);
     }
 
-    public int BcastRecvInt(){
+    public int recvInt(){
         int[] recvBuf= new int[1];
         MPI.COMM_WORLD.Bcast(recvBuf, 0, 1, MPI.INT, 0);
         return recvBuf[0];
