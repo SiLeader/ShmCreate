@@ -9,17 +9,17 @@ import java.nio.ByteBuffer;
 
 public class App{
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
+        if (args.length < 5) {
             System.err.println(
                     "usage: java " + Configuration.class.getName() + " <shm_name> <n_objs> [obj_size] [q_length]");
             System.exit(1);
         }
 
-        Configuration.Builder confBuilder = new Configuration.Builder(args[0], Integer.parseInt(args[1]));
-        if(args.length > 3) {
-            confBuilder.setObjectSize(Integer.parseInt(args[2]));
-            if(args.length > 4) {
-                confBuilder.setQueueLength(Integer.parseInt(args[3]));
+        Configuration.Builder confBuilder = new Configuration.Builder(args[3], Integer.parseInt(args[4]));
+        if(args.length > 5) {
+            confBuilder.setObjectSize(Integer.parseInt(args[5]));
+            if(args.length > 6) {
+                confBuilder.setQueueLength(Integer.parseInt(args[6]));
             }
         }
 
