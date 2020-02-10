@@ -5,17 +5,17 @@ import app.shm.*;
 // not make shm
 public class SparkInstead{
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
+        if (args.length < 3) {
             System.err.println(
-                    "usage: java " + Configuration.class.getName() + " <shm_name> <n_objs> [obj_size] [q_length]");
+                    "usage: java " + Configuration.class.getName() + " <send|recv> <shm_name> <n_objs> [obj_size] [q_length]");
             System.exit(1);
         }
 
-        Configuration.Builder confBuilder = new Configuration.Builder(args[0], Integer.parseInt(args[1]));
+        Configuration.Builder confBuilder = new Configuration.Builder(args[1], Integer.parseInt(args[2]));
         if(args.length > 3) {
-            confBuilder.setObjectSize(Integer.parseInt(args[2]));
+            confBuilder.setObjectSize(Integer.parseInt(args[3]));
             if(args.length > 4) {
-                confBuilder.setQueueLength(Integer.parseInt(args[3]));
+                confBuilder.setQueueLength(Integer.parseInt(args[4]));
             }
         }
 
