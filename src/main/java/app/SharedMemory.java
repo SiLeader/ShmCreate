@@ -102,7 +102,7 @@ public class SharedMemory {
         mBuffer.asDoubleBuffer().put(doubles, offset, length);
 
         mBuffer.position(0);
-        mBuffer.putInt(doubles.length);
+        mBuffer.putInt(length);
     }
 
     public void set(double[] doubles, boolean waitForRead) {
@@ -114,7 +114,7 @@ public class SharedMemory {
             setImpl(doubles, currentOffset, currentLength, waitForRead);
             waitForRead = true;
 
-            currentOffset = currentLength;
+            currentOffset += currentLength;
         }while(currentOffset < doubles.length);
     }
 
