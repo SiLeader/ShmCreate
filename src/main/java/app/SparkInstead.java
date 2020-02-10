@@ -5,15 +5,29 @@ import app.shm.*;
 // not make shm
 public class SparkInstead{
     public static void main(String[] args) throws Exception {
-        ShmConf conf = new ShmConf();
+        if (args.length < 2) {
+            System.err.println(
+                    "usage: java " + Configuration.class.getName() + " <shm_name> <n_objs> [obj_size] [q_length]");
+            System.exit(1);
+        }
+
+        Configuration.Builder confBuilder = new Configuration.Builder(args[0], Integer.parseInt(args[1]));
+        if(args.length > 3) {
+            confBuilder.setObjectSize(Integer.parseInt(args[2]));
+            if(args.length > 4) {
+                confBuilder.setQueueLength(Integer.parseInt(args[3]));
+            }
+        }
+
+        Configuration conf = confBuilder.build();
         XorDigest md;
         if(args[0].equals("send")){
-            ShmSender sender = new ShmSender(conf,false);
-            md = sender.random_sending(conf.path, conf.n_objs, conf.obj_size, conf.q_length);
+            Sender sender = new Sender.Builder(conf).buildWithoutMake();
+            md = sender.randomSending(conf.getPath(), conf.getObjectCount(), conf.getObjectSize(), conf.getQueueLength());
         }
         else{
-            ShmReceiver receiver = new ShmReceiver(conf,false);
-            md = receiver.random_receiving(conf.path, conf.n_objs);
+            Receiver receiver = new Receiver.Builder(conf).buildWithoutMake();
+            md = receiver.randomReceiving(conf.getPath(), conf.getObjectCount());
         }
 
         StringBuilder result = new StringBuilder();

@@ -3,27 +3,23 @@ package app.logger;
 import java.io.*;
 
 public class Logger{
-    private static Logger Instance = null;
-    public PrintWriter logger = null;
-
-    private Logger(){
-        try{
-            logger = new PrintWriter("log.txt");
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+    private static PrintWriter mLogger = null;
 
     public static void destroy(){
-        if(Instance.logger != null){
-            Instance.logger.close();
+        if(mLogger != null){
+            mLogger.close();
         }
     }
 
-    public static Logger getInstance(){
-        if(Instance == null){
-            Instance = new Logger();
+    public static PrintWriter getInstance(){
+        if(mLogger == null){
+            try{
+                mLogger = new PrintWriter("log.txt");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
-        return Logger.Instance;
+        return Logger.mLogger;
     }
 }
