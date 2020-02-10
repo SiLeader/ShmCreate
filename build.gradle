@@ -17,4 +17,4 @@ dependencies {
     compile files('libs/mpj-0.44.jar')
 }
 
-mainClassName = 'app.AppNoMpi'
+mainClassName = 'app.SharedMemoryTestMain'
