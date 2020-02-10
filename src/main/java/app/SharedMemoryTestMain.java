@@ -4,10 +4,10 @@ import java.util.Arrays;
 
 public class SharedMemoryTestMain {
     public static void main(String[] args) throws Exception {
-        SharedMemory sm = new SharedMemory("data.bin", 10_000_000);
+        SharedMemory sm = new SharedMemory("data.bin", 1_000);
 
         if(args.length == 1) {
-            double[] doubles = new double[100000];
+            double[] doubles = new double[100_000];
             for(int i = 0; i < doubles.length; ++i) {
                 doubles[i] = i;
             }

@@ -8,7 +8,8 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class SharedMemory {
-    private final long EMPTY_LENGTH = 0;
+    private final int EMPTY_LENGTH = 0;
+    private final int LAST_LENGTH = -1;
 
     private RandomAccessFile mFile;
     private final MappedByteBuffer mBuffer;
@@ -37,6 +38,26 @@ public class SharedMemory {
         mFile = null;
     }
 
+    private int getImpl(double[] doubles, int offset, boolean waitForData) {
+        while(waitForData) {
+            mBuffer.position(0);
+            if(mBuffer.getInt() != EMPTY_LENGTH) {
+                break;
+            }
+        }
+        mBuffer.position(0);
+        int length = mBuffer.getInt();
+        mBuffer.position(8);
+
+        DoubleBuffer doubleBuffer = mBuffer.asDoubleBuffer();
+        doubleBuffer.get(doubles, offset, length);
+
+        mBuffer.position(0);
+        mBuffer.putInt(EMPTY_LENGTH);
+
+        return length;
+    }
+
     public double[] get(boolean waitForData) {
         while(waitForData) {
             mBuffer.position(0);
@@ -45,18 +66,20 @@ public class SharedMemory {
             }
         }
         mBuffer.position(0);
-        long length = mBuffer.getLong();
+        int length = mBuffer.getInt();
+        int totalLength = mBuffer.getInt();
 
         if(length == EMPTY_LENGTH) {
             return null;
         }
 
-        DoubleBuffer doubleBuffer = mBuffer.asDoubleBuffer();
-        double[] doubles = new double[(int)length];
-        doubleBuffer.get(doubles);
+        double[] doubles = new double[totalLength];
+        int currentOffset = 0;
+        do {
+            currentOffset += getImpl(doubles, currentOffset, waitForData);
+            waitForData = true;
 
-        mBuffer.position(0);
-        mBuffer.putLong(EMPTY_LENGTH);
+        }while(currentOffset < totalLength);
 
         return doubles;
     }
@@ -65,22 +88,34 @@ public class SharedMemory {
         return get(true);
     }
 
-    public void set(double[] doubles, boolean waitForRead) {
-        assert doubles.length <= mMaxObjectCount;
-
+    private void setImpl(double[] doubles, int offset, int length, boolean waitForRead) {
         while(waitForRead) {
             mBuffer.position(0);
-            if(mBuffer.getLong() == EMPTY_LENGTH) {
+            if(mBuffer.getInt() == EMPTY_LENGTH) {
                 break;
             }
         }
 
         mBuffer.position(0);
-        mBuffer.putLong(EMPTY_LENGTH);
-        mBuffer.asDoubleBuffer().put(doubles);
+        mBuffer.putInt(EMPTY_LENGTH);
+        mBuffer.putInt(doubles.length);
+        mBuffer.asDoubleBuffer().put(doubles, offset, length);
 
         mBuffer.position(0);
-        mBuffer.putLong(doubles.length);
+        mBuffer.putInt(doubles.length);
+    }
+
+    public void set(double[] doubles, boolean waitForRead) {
+        int currentOffset = 0;
+        int currentLength;
+
+        do {
+            currentLength = Math.min(mMaxObjectCount, doubles.length - currentOffset);
+            setImpl(doubles, currentOffset, currentLength, waitForRead);
+            waitForRead = true;
+
+            currentOffset = currentLength;
+        }while(currentOffset < doubles.length);
     }
 
     public void set(double[] doubles) {
