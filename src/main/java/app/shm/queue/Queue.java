@@ -90,9 +90,14 @@ public class Queue {
     }
 
     private static int bitCountPowerOf2(int n) {
+        int r = 0;
         if (!isPowerOf2(n))
             return -1;
-        return Integer.bitCount(n);
+        while (n > 1) {
+            r++;
+            n >>= 1;
+        }
+        return r;
     }
 
     private static int getSize(int objectSize, int queueLength) {

@@ -36,14 +36,15 @@ public class Receiver {
         this(
                 conf,
                 new Queue.Builder(conf.getPath())
-                        .setObjectSize(conf.getObjectSize())
-                        .setQueueLength(conf.getQueueLength())
-                        .buildWithTruncate()
+                        .build()
         );
     }
 
     private Receiver(Configuration conf,Boolean shouldMake) throws IOException {
-        this(conf, new Queue.Builder(conf.getPath()).build());
+        this(conf, new Queue.Builder(conf.getPath())
+                .setObjectSize(conf.getObjectSize())
+                .setQueueLength(conf.getQueueLength())
+                .buildWithTruncate());
     }
 
     public XorDigest randomReceiving(String path, int n_objs)
