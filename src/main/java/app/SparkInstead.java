@@ -22,7 +22,9 @@ public class SparkInstead{
         Configuration conf = confBuilder.build();
         XorDigest md;
         if(args[0].equals("send")){
+            System.err.println("Sender.Builfer");
             Sender sender = new Sender.Builder(conf).buildWithoutMake();
+            System.err.println("randomSend");
             md = sender.randomSending(conf.getPath(), conf.getObjectCount(), conf.getObjectSize(), conf.getQueueLength());
         }
         else{

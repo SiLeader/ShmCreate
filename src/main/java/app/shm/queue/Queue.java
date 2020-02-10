@@ -60,15 +60,20 @@ public class Queue {
             if (logQueueLength < 0)
                 throw new InvalidParameterException("log queue length >= 0");
             QueueBuffer queue = new QueueBuffer(buffer, logObjectSize, logQueueLength);
+            System.err.println("trunc5");
 
             return new Queue(mPath, file, queue, buffer);
         }
 
         public Queue build() throws IOException {
+            System.err.println("build1");
             RandomAccessFile file = new RandomAccessFile(resolveFullPath(mPath), "rw");
+            System.err.println("build2");
             MappedByteBuffer buffer = commonBuild(file);
+            System.err.println("build3");
 
             QueueBuffer queue = new QueueBuffer(buffer);
+            System.err.println("build4");
 
             return new Queue(mPath, file, queue, buffer);
         }
