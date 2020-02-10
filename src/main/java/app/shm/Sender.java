@@ -56,6 +56,7 @@ public class Sender {
     public XorDigest randomSending(String path, int n_objs, int obj_size, int q_length) throws Exception {
         mRandom.nextBytes(mSeries);
         for (int i = 0; i < n_objs; i++) {
+            System.err.println("[" + i + "]:"+ mSeries);
             mQueue.startEnqueueWait().put(mSeries);
             mQueue.finishEnqueue();
         }

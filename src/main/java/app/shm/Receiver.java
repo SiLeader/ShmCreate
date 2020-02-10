@@ -53,6 +53,7 @@ public class Receiver {
         for (int i = 0; i < n_objs; i++) {
             b = mQueue.startDequeueWait();
             mQueue.finishDequeue();
+            System.err.println("[" + i + "]:" + b);
             if (progress != i * 100 / n_objs) {
                 progress = i * 100 / n_objs;
                 System.err.println("progress: " + progress + "%");
