@@ -11,10 +11,10 @@ public class IndexQueue {
     private final static int INDEX_PRODUCE = 0;
     private final static int INDEX_CONSUME = 1;
 
-    public IndexQueue(IntBuffer meta, IntBuffer table, int queueLength) {
+    public IndexQueue(IntBuffer meta, IntBuffer table, int logQueueLength) {
         mMetaBuffer = meta;
         mTableBuffer = table;
-        mQueueLength = queueLength;
+        mQueueLength = 1 << logQueueLength;
         mQueueMask = mQueueLength - 1;
         mMetaBuffer.put(INDEX_PRODUCE, 0);
         mMetaBuffer.put(INDEX_CONSUME, 0);
