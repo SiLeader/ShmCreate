@@ -26,6 +26,8 @@ public class QueueBuffer {
 
     private QueueBuffer(boolean initializeMappedArea, MappedByteBuffer buffer, int logObjectSize, int logQueueLength) {
         buffer.position(0);
+        System.err.println(Sizeof.SHM_QUEUE_META);
+        System.err.println(buffer.capacity());
         mMeta = ((ByteBuffer)buffer.slice().limit(Sizeof.SHM_QUEUE_META)).order(ByteOrder.nativeOrder()).asIntBuffer();
 
         if(initializeMappedArea) {
@@ -33,8 +35,12 @@ public class QueueBuffer {
             mMeta.put(INDEX_LOG_QUEUE_LENGTH, logQueueLength);
             mMeta.put(INDEX_PRODUCE_EXPOSE_INDEX, -1);
             mMeta.put(INDEX_CONSUME_EXPOSE_INDEX, -1);
+        }else{
+            logObjectSize = mMeta.get(INDEX_LOG_OBJECT_SIZE);
+            logQueueLength = mMeta.get(INDEX_LOG_QUEUE_LENGTH);
         }
         IntBuffer availMeta, usedMeta, availTable, usedTable;
+
         final int objectSize = 1 << logObjectSize;
         final int queueLength = 1 << logQueueLength;
         final int indexTableSize = Sizeof.UINT32_T * queueLength;
@@ -53,6 +59,8 @@ public class QueueBuffer {
         usedTable = ((MappedByteBuffer)buffer.slice().limit(indexTableSize)).order(ByteOrder.nativeOrder()).asIntBuffer();
 
         buffer.position(buffer.position() + indexTableSize);
+
+        System.err.printf("table: %d, size: %d, queue length: %d\n", objectTableSize, objectSize, queueLength);
 
         mTable = ((MappedByteBuffer)buffer.slice().limit(objectTableSize)).order(ByteOrder.nativeOrder());
 
@@ -74,6 +82,7 @@ public class QueueBuffer {
         final int logObjectSize = mMeta.get(INDEX_LOG_OBJECT_SIZE);
         final int objectSize = 1 << logObjectSize;
         mTable.position(objectSize * idx);
+
         ByteBuffer b = ((ByteBuffer) mTable.slice().limit(objectSize)).order(ByteOrder.nativeOrder());
         mMeta.put(IDX_EXPOSE_IDX, idx);
         return b;

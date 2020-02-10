@@ -3,6 +3,7 @@ package app.shm;
 import app.shm.queue.Queue;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Random;
 
 public class Sender {
@@ -39,6 +40,13 @@ public class Sender {
     private Sender(Configuration conf) throws IOException {
         this(
                 conf,
+                new Queue.Builder(conf.getPath()).build()
+        );
+    }
+
+    private Sender(Configuration conf, Boolean shouldMake) throws IOException {
+        this(
+                conf,
                 new Queue.Builder(conf.getPath())
                         .setObjectSize(conf.getObjectSize())
                         .setQueueLength(conf.getQueueLength())
@@ -46,18 +54,12 @@ public class Sender {
         );
     }
 
-    private Sender(Configuration conf, Boolean shouldMake) throws IOException {
-        this(
-                conf,
-                new Queue.Builder(conf.getPath()).build()
-        );
-    }
-
     public XorDigest randomSending(String path, int n_objs, int obj_size, int q_length) throws Exception {
         mRandom.nextBytes(mSeries);
         for (int i = 0; i < n_objs; i++) {
             System.err.println("[" + i + "]:"+ mSeries);
-            mQueue.startEnqueueWait().put(mSeries);
+            ByteBuffer bb = mQueue.startEnqueueWait();
+            bb.put(mSeries);
             mQueue.finishEnqueue();
         }
         mDigest.update(mSeries);

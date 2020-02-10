@@ -26,7 +26,7 @@ public class IndexQueue {
             final int cons = mMetaBuffer.get(INDEX_CONSUME);
 
             final int nFilled = prod - cons;
-            if (nFilled >= mQueueLength) {
+            if (nFilled < mQueueLength) {
                 mTableBuffer.put(prod & mQueueMask, v);
                 mMetaBuffer.put(INDEX_PRODUCE, prod + 1);
                 break;

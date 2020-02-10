@@ -46,6 +46,8 @@ public class Configuration {
         mObjectCount = objectCount;
         mObjectSize = objectSize;
         mQueueLength = queueLength;
+
+        System.err.printf("path: %s, object count: %d, object size: %d, queue length: %d\n", mPath, mObjectCount, mObjectSize, mQueueLength);
     }
 
     public String getPath() {
