@@ -32,9 +32,13 @@ public class Queue {
 
         private MappedByteBuffer commonBuild(RandomAccessFile file) throws IOException {
             FileChannel channel = file.getChannel();
-
-            final int shmSize = getSize(mObjectSize, mQueueLength);
-            channel.truncate(shmSize);
+            long shmSize = 0;
+            if(mObjectSize != null && mQueueLength != null) {
+                shmSize = getSize(mObjectSize, mQueueLength);
+                channel.truncate(shmSize);
+            }else{
+                shmSize = channel.size();
+            }
             MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, shmSize);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
 
