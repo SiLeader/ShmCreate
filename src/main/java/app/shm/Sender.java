@@ -40,7 +40,7 @@ public class Sender {
         this(
                 conf,
                 new Queue.Builder(conf.getPath())
-                        .setQueueLength(conf.getObjectSize())
+                        .setObjectSize(conf.getObjectSize())
                         .setQueueLength(conf.getQueueLength())
                         .buildWithTruncate()
         );
